@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+
+{% block body %}
+    <div class="form_container">
+        <div class="form">
+            <form method="POST" action="{% url 'index' %}">
+                <div class="form_header">
+                    <p>Create a Listing</p>
+                </div>
+                <div class="form_body">
+                    <div class="name_input">
+                        <input type="text">
+                    </div>
+                    <div class="text_input">
+                        <input type="text">
+                    </div>
+                    <div class="url_input">
+                        <input type="url">
+                    </div>
+                    <div class="bid_input">
+                        <input type="number" step="0.01">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock body %}
+    
