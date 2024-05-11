@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -13,9 +14,12 @@ def index(request):
         "items": items
     })
 
+@login_required
 def CreateListing(request):
+    if request.method == "POST":
+        pass
+    
     return render(request, "auctions/newListing.html")
-
 
 def login_view(request):
     if request.method == "POST":
