@@ -4,8 +4,9 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+import random, string
 
-from .models import User, Item
+from .models import User, Item, Bid, Comment
 
 
 def index(request):
@@ -14,12 +15,59 @@ def index(request):
         "items": items
     })
 
+def Codegenerator():
+    codes = []
+    for item in Item.objects.all():
+        codes.append(item.code)
+
+    characters = string.ascii_letters + string.digits
+
+    while True:
+        code = ''.join(random.choice(characters) for i in range(12))
+        if(code not in codes):
+            return code
+        else:
+            code = ''.join(random.choice(characters) for i in range(12))
+
 @login_required
 def CreateListing(request):
     if request.method == "POST":
-        pass
+        name = request.POST["name"]
+        text = request.POST["description"]
+        img = request.POST["imageURL"]
+        sBid = request.POST["startingBid"]
+        category = request.POST["category"]
+        code = Codegenerator()
+        
+        item = Item.objects.create(itemUser = request.user, itemName = f"{name}", itemImage = f"{img}", itemText = f"{text}", itemBid = float(sBid), category = category, code = code)
+        item.save()
+        bid = Bid.objects.create(user = request.user, item = item, bidAmount = sBid)
+        bid.save()
+
+        return HttpResponseRedirect(reverse("index"))
     
     return render(request, "auctions/newListing.html")
+
+def ListingPage(request, listingCode):
+    item = Item.objects.get(code=f"{listingCode}")
+    comments = Comment.objects.filter(item = item)
+
+    if request.method == "POST" and request.POST['newBid']:
+        if request.user.is_authenticated:
+            newBid = request.POST['newBid']
+            item.itemBid = float(newBid)
+            HttpResponseRedirect(reverse("listingPage", kwargs={"listingCode": listingCode}))
+        else:
+            HttpResponseRedirect(reverse("login"))
+    elif request.method == "POST" and request.POST['newComment']:
+        if request.user.is_authenticated:
+            comment = Comment.objects.create(item = Item, user = request.user, )
+        else:
+            HttpResponseRedirect(reverse("login"))
+
+    return render(request, "auctions/listingpage.html",{
+        "item": item
+    })
 
 def login_view(request):
     if request.method == "POST":

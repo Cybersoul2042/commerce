@@ -8,9 +8,36 @@ class User(AbstractUser):
 class Item(models.Model):
     itemUser = models.ForeignKey(User, related_name = "Item_Owner", on_delete = models.CASCADE)
     itemName = models.CharField(max_length=64)
-    itemImage = models.URLField()
+    itemImage = models.TextField()
     itemText = models.TextField()
-    itemStartBid = models.FloatField()
+    itemBid = models.FloatField()
+    category = models.TextField()
+    code = models.CharField(max_length=12)
 
-    def __str__(self):
-        return self.itemName
+    def serialize(self):
+        return {
+            "itemName": self.itemName,
+            "itemImage": self.itemImage
+        }
+    
+class Bid(models.Model):
+    user = models.ForeignKey(User, related_name = "Bid_User", on_delete = models.CASCADE)
+    item = models.ForeignKey(Item, related_name = "Bid_Item", on_delete = models.CASCADE)
+    bidAmount = models.FloatField()
+
+    def serialized(self):
+        return {
+            "BidUser": self.user,
+            "BidItem": self.itemName,
+            "BidAmount": self.bidAmount
+        }
+    
+class Comment(models.Model):
+    item = models.ForeignKey(Item, related_name = "Comment_Item", on_delete = models.CASCADE)
+    user = models.ForeignKey(User, related_name = "Comment_User", on_delete = models.CASCADE)
+    comment = models.CharField(max_length = 256)
+
+    def serialize(self):
+        return {
+            "comment": self.comment
+        }

@@ -1,0 +1,47 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+
+{% block body %}
+    <div class="listing-container">
+        <div class="listing-dets">
+            <div class="listing-image">
+                <img class="listing-image" src="{{ item.itemImage }}"></img>
+            </div>
+            <div class="listing-context">
+                <div class="listing-name">Name : <p>{{ item.itemName }}</p></div>
+                <div class="listing-description">Description : <p>- {{ item.itemText }}</p></div>
+                <div class="listing-category">Category : <p>{{ item.category }}</p></div>
+                <div class="listing-bid">Current Bid : <p>{{ item.itemBid }} $</p></div>
+                <div class="new-bid">Your Bid : 
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input name="newBid" type="number" step="0.01" placeholder="{{item.itemBid}}" min="{{item.itemBid}}">
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="comment-section">
+            <div class="comments-container">
+                <strong>Comments :</strong>
+                <div class="new-comment-sec">
+                    
+                </div>
+                <div class="comments">
+                    
+                    {% for comment in comments %}
+                        
+                        {% if empty %}
+                            No comment
+                        {% endif %}
+                            
+                    {% endfor %}
+                        
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock body %}
+    

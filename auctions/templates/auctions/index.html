@@ -1,15 +1,31 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
-
     
-    {% for item in items %}
-        <div class="item_container">
-            <div class="item">
-                <p>{{item.name}}</p>
+
+    <div class="body-container">
+        <p class="page-type">Active Listings</p>
+        <div class="items-container">
+            <div class="items">
+                {% for item in items %}
+                    <div class="item_container">
+                        <a href="{% url 'listingPage' item.code %}">
+                            <div class="item-details">
+                                <div class="item-image">
+                                    <img src="{{ item.itemImage }}" alt="img">
+                                </div>
+                                
+                                <div class="item-context">
+                                    <p class="item-name">{{ item.itemName }}</p>
+                                    <p class="item-text">{{ item.itemText }}</p>
+                                    <p class="item-bid">Current Bid : {{ item.itemBid }}$</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
             </div>
         </div>
-    {% endfor %}
-        
+    </div>
+    
 {% endblock %}
