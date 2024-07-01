@@ -421,14 +421,14 @@ img{
     color: white;
 }
 .listing-category{
-    font-size: 22px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     gap: 10px;
     color: rgb(188, 117, 255);
 }
 .listing-category > p{
-    font-size: 20px;
+    font-size: 16px;
     color: white;
 }
 .listing-bid{

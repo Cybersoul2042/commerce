@@ -8,17 +8,26 @@
         <div class="listing-dets">
             <div class="listing-image">
                 <img class="listing-image" src="{{ item.itemImage }}"></img>
+                <div class="watchlist-container">
+                    <form method="POST" action="item-{{ item.code }}">
+                        {% if  item.watchlisted == False %}
+                            <input name="watchlist" type="submit" value="Watchlist">
+                        {% else %}
+                            <input name="unwatchlist" type="submit" value="UnWatchlist">
+                        {% endif %}
+                    </form>
+                </div>
             </div>
             <div class="listing-context">
-                <div class="listing-name">Name : <p>{{ item.itemName }}</p></div>
+                <div class="listing-name">Name : <p>{{ item.itemName }}</p><div class="listing-category">Category : <p>{{ item.category }}</p></div></div>
                 <div class="listing-description">Description : <p>- {{ item.itemText }}</p></div>
-                <div class="listing-category">Category : <p>{{ item.category }}</p></div>
-                <div class="listing-bid">Current Bid : <p>{{ item.itemBid }} $</p></div>
+                
+                <div class="listing-bid">Current Bid : <p>${{ item.itemBid }}</p></div>
                 <div class="new-bid">Your Bid : 
-                    <form method="POST">
-                        {% csrf_token %}
+                    <form method="POST" action="item-{{ item.code }}">
+                        <input name="bid" type="hidden">
                         <input name="newBid" type="number" step="0.01" placeholder="{{item.itemBid}}" min="{{item.itemBid}}">
-                        <input type="submit" value="Submit">
+                        <input name="bid-submit" type="submit" value="Submit">
                     </form>
                 </div>
             </div>
@@ -27,7 +36,12 @@
             <div class="comments-container">
                 <strong>Comments :</strong>
                 <div class="new-comment-sec">
-                    
+                    <form method="POST" action="item-{{ item.code }}">
+                        <div class="new-comment">
+                            <input type="text" name="newComment" required>
+                            <input name="comment-submit" type="submit" value="Comment">
+                        </div>
+                    </form>
                 </div>
                 <div class="comments">
                     

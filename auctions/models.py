@@ -12,6 +12,7 @@ class Item(models.Model):
     itemText = models.TextField()
     itemBid = models.FloatField()
     category = models.TextField()
+    watchlisted = models.BooleanField(default = False)
     code = models.CharField(max_length=12)
 
     def serialize(self):
@@ -40,4 +41,13 @@ class Comment(models.Model):
     def serialize(self):
         return {
             "comment": self.comment
+        }
+    
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, related_name="User_Watchlist", on_delete = models.CASCADE)
+    item = models.ForeignKey(Item, related_name="Item_Watchlist", on_delete = models.CASCADE)
+
+    def serialize(self):
+        return {
+            "item": self.item
         }

@@ -1,12 +1,13 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 import random, string
 
-from .models import User, Item, Bid, Comment
+from .models import User, Item, Bid, Comment, Watchlist
 
 
 def index(request):
@@ -39,7 +40,7 @@ def CreateListing(request):
         category = request.POST["category"]
         code = Codegenerator()
         
-        item = Item.objects.create(itemUser = request.user, itemName = f"{name}", itemImage = f"{img}", itemText = f"{text}", itemBid = float(sBid), category = category, code = code)
+        item = Item.objects.create(itemUser = request.user, itemName = f"{name}", itemImage = f"{img}", itemText = f"{text}", itemBid = float(sBid), category = category, watchlisted = False, code = code)
         item.save()
         bid = Bid.objects.create(user = request.user, item = item, bidAmount = sBid)
         bid.save()
@@ -48,22 +49,30 @@ def CreateListing(request):
     
     return render(request, "auctions/newListing.html")
 
+@csrf_exempt
 def ListingPage(request, listingCode):
     item = Item.objects.get(code=f"{listingCode}")
     comments = Comment.objects.filter(item = item)
-
-    if request.method == "POST" and request.POST['newBid']:
-        if request.user.is_authenticated:
-            newBid = request.POST['newBid']
-            item.itemBid = float(newBid)
-            HttpResponseRedirect(reverse("listingPage", kwargs={"listingCode": listingCode}))
-        else:
-            HttpResponseRedirect(reverse("login"))
-    elif request.method == "POST" and request.POST['newComment']:
-        if request.user.is_authenticated:
-            comment = Comment.objects.create(item = Item, user = request.user, )
-        else:
-            HttpResponseRedirect(reverse("login"))
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if 'watchlist' in request.POST:
+                if item.watchlisted == False:
+                    item.watchlisted = True
+                    item.save()
+                    isWatch = Watchlist.objects.create(user = request.user, item = item)
+                    isWatch.save()
+            if 'unwatchlist' in request.POST:
+                if item.watchlisted == True:
+                    item.watchlisted = False
+                    item.save()
+            if 'bid-submit' in request.POST:
+                newBid = request.POST['newBid']
+                item.itemBid = float(newBid)
+                item.save()
+            if 'comment-submit' in request.POST:
+                comment = Comment.objects.create(item = Item, user = request.user, comment = request.POST['newComment'])
+    else:
+        HttpResponseRedirect(reverse("login"))
 
     return render(request, "auctions/listingpage.html",{
         "item": item
