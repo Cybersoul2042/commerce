@@ -1,0 +1,31 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    
+
+    <div class="body-container">
+        <p class="page-type">Active Listings</p>
+        <div class="items-container">
+            <div class="items">
+                {% for item in items %}
+                    <div class="item-container">
+                        <a href="{% url 'listingPage' item.code %}">
+                            <div class="item-details">
+                                <div class="item-image">
+                                    <img src="{{ item.itemImage }}" alt="img">
+                                </div>
+                                
+                                <div class="item-context">
+                                    <div class="item-name" style="color: rgb(242, 144, 255); display: flex; align-items: center; justify-content: center; gap: 5px;">Name: <p style="color: white;">{{ item.itemName }}</p></div>
+                                    <div class="item-text" style="color: rgb(242, 144, 255);display: flex; align-items: center; justify-content: center; gap: 5px;">Description: <p style="color: white;"> {{ item.itemText }}</p></div>
+                                    <div class="item-bid" style="color: rgb(242, 144, 255); display: flex; align-items: center; justify-content: center;">Current Bid: <p style="color: white;">{{ item.itemBid }}$</p></div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

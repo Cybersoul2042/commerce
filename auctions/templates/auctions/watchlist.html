@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% load static %}
+
+
+{% block body %}
+    <div class="body-container">
+        <div class="page-type">Your Watchlist</div>
+        <div class="items-container">
+            <div class="items">
+                {% for item in items %}
+                    <div class="item-container">
+                        <a href="{% url 'listingPage' item.code %}">
+                            <div class="item-details">
+                                <div class="item-image">
+                                    <img src="{{ item.itemImage }}" alt="img">
+                                </div>
+                                
+                                <div class="item-context">
+                                    <p class="item-name">{{ item.itemName }}</p>
+                                    <p class="item-text">{{ item.itemText }}</p>
+                                    <p class="item-bid">Current Bid : {{ item.itemBid }}$</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+    
